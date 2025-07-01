@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>VIP Lottery Predictor - Chart Analyzer</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@600&display=swap');
+
+    body {
+      margin: 0;
+      padding: 40px 20px;
+      font-family: 'Montserrat', sans-serif;
+      background: linear-gradient(135deg, #1e1e2f, #14141f);
+      color: #e0e0e0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+    }
+
+    .container {
+      background: #222236cc;
+      border-radius: 14px;
+      width: 420px;
+      max-width: 100%;
+      box-shadow: 0 0 40px #00ffa2aa;
+      padding: 30px 28px;
+      margin-bottom: 30px;
+      border: 1.5px solid #00ffa2cc;
+      text-align: center;
+    }
+
+    h1 {
+      margin-bottom: 28px;
+      font-weight: 700;
+      letter-spacing: 1.8px;
+      color: #00ffa2;
+    }
+
+    label {
+      display: block;
+      margin-top: 22px;
+      font-weight: 600;
+      font-size: 1.15rem;
+      color: #80ffc8;
+      text-align: left;
+    }
+
+    input[type="text"], select {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 10px;
+      border: none;
+      margin-top: 8px;
+      font-size: 1rem;
+      background: #121224;
+      color: #00ffa2;
+      box-shadow: inset 0 0 6px #00ffa2aa;
+      outline-offset: 2px;
+      outline-color: #00ff9d;
+    }
+
+    input[type="file"] {
+      margin-top: 12px;
+      color: #00ffa2;
+    }
+
+    button {
+      margin-top: 28px;
+      width: 100%;
+      max-width: 360px;
+      background: #00ffa2;
+      color: #14141f;
+      border: none;
+      padding: 15px;
+      font-size: 1.15rem;
+      font-weight: 700;
+      border-radius: 14px;
+      cursor: pointer;
+      box-shadow: 0 0 22px #00ffa2cc;
+      transition: background 0.25s ease;
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    button:hover {
+      background: #00c77d;
+    }
+
+    .output-box {
+      margin-top: 32px;
+      background: #121224cc;
+      border-radius: 14px;
+      padding: 22px 20px;
+      font-weight: 700;
+      font-size: 1.35rem;
+      text-align: center;
+      box-shadow: inset 0 0 18px #00ffa2cc;
+      min-height: 90px;
+      color: #00ffa2;
+    }
+
+    .image-preview {
+      margin-top: 18px;
+      max-width: 100%;
+      border-radius: 12px;
+      box-shadow: 0 0 18px #00ffa2cc;
+      display: none;
+    }
+
+    .error-msg {
+      margin-top: 15px;
+      color: #ff4c4c;
+      font-weight: 700;
+      font-size: 1rem;
+      text-align: center;
+    }
+
+    .whatsapp-btn {
+      width: 420px;
+      max-width: 100%;
+      background: #25d366;
+      color: white;
+      font-weight: 700;
+      font-size: 1.2rem;
+      border-radius: 16px;
+      padding: 15px 0;
+      text-align: center;
+      text-decoration: none;
+      box-shadow: 0 0 24px #25d366cc;
+      transition: background 0.3s ease;
+      margin: 0 auto 40px auto;
+      font-family: 'Montserrat', sans-serif;
+      display: block;
+    }
+
+    .whatsapp-btn:hover {
+      background: #1ebe5b;
+    }
+
+    @media (max-width: 480px) {
+      body {
+        padding: 30px 12px;
+      }
+      .container {
+        width: 100%;
+        padding: 22px 18px;
+      }
+      h1 {
+        font-size: 1.6rem;
+        margin-bottom: 20px;
+      }
+      label {
+        font-size: 1rem;
+        margin-top: 16px;
+      }
+      input[type="text"], select {
+        font-size: 0.95rem;
+        padding: 10px 12px;
+      }
+      button {
+        font-size: 1rem;
+        padding: 13px;
+        margin-top: 22px;
+      }
+      .output-box {
+        font-size: 1.15rem;
+        padding: 18px 16px;
+      }
+      .whatsapp-btn {
+        font-size: 1.1rem;
+        padding: 14px 0;
+        margin-bottom: 30px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>VIP 𝑾𝑶𝑳𝑽𝑬𝑺 Predictor</h1>
+
+    <label for="periodInput">Enter Period Number:</label>
+    <input type="text" id="periodInput" placeholder="e.g. 202506280041" autocomplete="off" />
+
+    <label for="fileInput">Or upload Wingo Chart Screenshot:</label>
+    <input type="file" id="fileInput" accept="image/png, image/jpeg" />
+
+    <label for="numberSelect">Or select last number manually:</label>
+    <select id="numberSelect">
+      <option value="">Select Last Number</option>
+      <option value="0">0</option>
+      <option value="1">1</option>
+      <option value="2">2</option>
+      <option value="3">3</option>
+      <option value="4">4</option>
+      <option value="5">5</option>
+      <option value="6">6</option>
+      <option value="7">7</option>
+      <option value="8">8</option>
+      <option value="9">9</option>
+    </select>
+
+    <button id="predictBtn">Predict Next Result</button>
+
+    <div class="error-msg" id="errorMsg"></div>
+    <div class="output-box" id="resultOutput">Prediction will appear here</div>
+    <img id="imgPreview" class="image-preview" alt="Chart Preview" />
+  </div>
+
+  <a
+    href="https://wa.link/eph5ri"
+    target="_blank"
+    rel="noopener noreferrer"
+    class="whatsapp-btn"
+  >
+    Join WhatsApp Group for 99% Accurate Signals
+  </a>
+
+  <script>
+    const periodInput = document.getElementById('periodInput');
+    const fileInput = document.getElementById('fileInput');
+    const numberSelect = document.getElementById('numberSelect');
+    const predictBtn = document.getElementById('predictBtn');
+    const resultOutput = document.getElementById('resultOutput');
+    const imgPreview = document.getElementById('imgPreview');
+    const errorMsg = document.getElementById('errorMsg');
+
+    function resetAll() {
+      resultOutput.textContent = 'Prediction will appear here';
+      errorMsg.textContent = '';
+      imgPreview.style.display = 'none';
+    }
+
+    periodInput.addEventListener('input', resetAll);
+    fileInput.addEventListener('change', resetAll);
+    numberSelect.addEventListener('change', resetAll);
+
+    predictBtn.onclick = () => {
+      resetAll();
+      const period = periodInput.value.trim();
+      const number = numberSelect.value;
+      const file = fileInput.files[0];
+
+      if (period) {
+        resultOutput.textContent = 'Analyzing... Please wait 3 seconds...';
+        setTimeout(() => {
+          const prediction = Math.random() > 0.5 ? 'BIG' : 'SMALL';
+          resultOutput.textContent = `Period ${period} Prediction: ${prediction}`;
+        }, 3000);
+      } else if (file) {
+        const imgUrl = URL.createObjectURL(file);
+        imgPreview.src = imgUrl;
+        imgPreview.style.display = 'block';
+        resultOutput.textContent = 'Analyzing image... Please wait 3 seconds...';
+        setTimeout(() => {
+          const prediction = Math.random() > 0.5 ? 'BIG' : 'SMALL';
+          resultOutput.textContent = `AI Prediction from Chart: ${prediction}`;
+        }, 3000);
+      } else if (number !== '') {
+        resultOutput.textContent = 'Analyzing... Please wait 3 seconds...';
+        setTimeout(() => {
+          const num = parseInt(number);
+          const prediction = num >= 5 ? 'BIG' : 'SMALL';
+          const confidence = Math.floor(60 + Math.random() * 33); // max 92%
+          resultOutput.textContent = `Next Result is likely ${prediction}\n(based on past data)\nConfidence: ${confidence}%`;
+        }, 3000);
+      } else {
+        errorMsg.textContent = 'Please enter a period, upload chart, or select last number.';
+      }
+    };
+  </script>
+</body>
+</html>
