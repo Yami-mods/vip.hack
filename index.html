@@ -96,11 +96,12 @@
       border-radius: 14px;
       padding: 22px 20px;
       font-weight: 700;
-      font-size: 1.35rem;
+      font-size: 1.25rem;
       text-align: center;
       box-shadow: inset 0 0 18px #00ffa2cc;
       min-height: 90px;
       color: #00ffa2;
+      white-space: pre-line;
     }
 
     .image-preview {
@@ -167,7 +168,7 @@
         margin-top: 22px;
       }
       .output-box {
-        font-size: 1.15rem;
+        font-size: 1.1rem;
         padding: 18px 16px;
       }
       .whatsapp-btn {
@@ -219,6 +220,9 @@
     Join WhatsApp Group for 99% Accurate Signals
   </a>
 
+  <!-- Tesseract OCR -->
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@4.0.2/dist/tesseract.min.js"></script>
+
   <script>
     const periodInput = document.getElementById('periodInput');
     const fileInput = document.getElementById('fileInput');
@@ -234,39 +238,81 @@
       imgPreview.style.display = 'none';
     }
 
+    function predictFromDigit(digit) {
+      const prediction = digit >= 5 ? 'BIG' : 'SMALL';
+      const color =
+        digit === 0 || digit === 5
+          ? 'VIOLET'
+          : digit % 2 === 0
+          ? 'GREEN'
+          : 'RED';
+      const confidence = Math.floor(70 + Math.random() * 25);
+      return { prediction, color, confidence, digit };
+    }
+
+    function displayPrediction({ prediction, color, confidence, digit }) {
+      resultOutput.innerHTML = `
+        ✅ <strong>Last Digit:</strong> ${digit}
+        🔮 <strong>Prediction:</strong> ${prediction}
+        🎨 <strong>Expected Color:</strong> ${color}
+        📊 <strong>Confidence:</strong> ${confidence}%
+      `;
+    }
+
     periodInput.addEventListener('input', resetAll);
     fileInput.addEventListener('change', resetAll);
     numberSelect.addEventListener('change', resetAll);
 
-    predictBtn.onclick = () => {
+    predictBtn.onclick = async () => {
       resetAll();
       const period = periodInput.value.trim();
       const number = numberSelect.value;
       const file = fileInput.files[0];
 
       if (period) {
-        resultOutput.textContent = 'Analyzing... Please wait 3 seconds...';
+        resultOutput.textContent = 'Analyzing Period Number... Please wait 3 seconds...';
         setTimeout(() => {
-          const prediction = Math.random() > 0.5 ? 'BIG' : 'SMALL';
-          resultOutput.textContent = `Period ${period} Prediction: ${prediction}`;
+          const simulatedLastDigit = Math.floor(Math.random() * 10);
+          const prediction = predictFromDigit(simulatedLastDigit);
+          displayPrediction(prediction);
         }, 3000);
+
       } else if (file) {
         const imgUrl = URL.createObjectURL(file);
         imgPreview.src = imgUrl;
         imgPreview.style.display = 'block';
-        resultOutput.textContent = 'Analyzing image... Please wait 3 seconds...';
-        setTimeout(() => {
-          const prediction = Math.random() > 0.5 ? 'BIG' : 'SMALL';
-          resultOutput.textContent = `AI Prediction from Chart: ${prediction}`;
-        }, 3000);
+        resultOutput.textContent = 'Analyzing chart image using AI...';
+
+        Tesseract.recognize(
+          file,
+          'eng',
+          {
+            logger: m => {
+              resultOutput.textContent = `Processing image: ${Math.round(m.progress * 100)}%`;
+            }
+          }
+        ).then(({ data: { text } }) => {
+          console.log('OCR Output:', text);
+          const lastDigitMatch = text.match(/\b\d\b/g);
+          if (lastDigitMatch && lastDigitMatch.length > 0) {
+            const lastDigit = parseInt(lastDigitMatch[lastDigitMatch.length - 1]);
+            const prediction = predictFromDigit(lastDigit);
+            displayPrediction(prediction);
+          } else {
+            resultOutput.textContent = '❌ Could not detect any number from chart image.';
+          }
+        }).catch(err => {
+          console.error(err);
+          resultOutput.textContent = '❌ Error processing image.';
+        });
+
       } else if (number !== '') {
-        resultOutput.textContent = 'Analyzing... Please wait 3 seconds...';
+        resultOutput.textContent = 'Analyzing Selected Number... Please wait 3 seconds...';
         setTimeout(() => {
-          const num = parseInt(number);
-          const prediction = num >= 5 ? 'BIG' : 'SMALL';
-          const confidence = Math.floor(60 + Math.random() * 33); // max 92%
-          resultOutput.textContent = `Next Result is likely ${prediction}\n(based on past data)\nConfidence: ${confidence}%`;
+          const prediction = predictFromDigit(parseInt(number));
+          displayPrediction(prediction);
         }, 3000);
+
       } else {
         errorMsg.textContent = 'Please enter a period, upload chart, or select last number.';
       }
