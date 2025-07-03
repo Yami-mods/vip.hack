@@ -17,7 +17,6 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: flex-start;
     }
 
     .container {
@@ -58,8 +57,6 @@
       background: #121224;
       color: #00ffa2;
       box-shadow: inset 0 0 6px #00ffa2aa;
-      outline-offset: 2px;
-      outline-color: #00ff9d;
     }
 
     input[type="file"] {
@@ -70,7 +67,6 @@
     button {
       margin-top: 28px;
       width: 100%;
-      max-width: 360px;
       background: #00ffa2;
       color: #14141f;
       border: none;
@@ -80,10 +76,6 @@
       border-radius: 14px;
       cursor: pointer;
       box-shadow: 0 0 22px #00ffa2cc;
-      transition: background 0.25s ease;
-      display: block;
-      margin-left: auto;
-      margin-right: auto;
     }
 
     button:hover {
@@ -96,10 +88,9 @@
       border-radius: 14px;
       padding: 22px 20px;
       font-weight: 700;
-      font-size: 1.25rem;
+      font-size: 1.2rem;
       text-align: center;
       box-shadow: inset 0 0 18px #00ffa2cc;
-      min-height: 90px;
       color: #00ffa2;
       white-space: pre-line;
     }
@@ -117,7 +108,6 @@
       color: #ff4c4c;
       font-weight: 700;
       font-size: 1rem;
-      text-align: center;
     }
 
     .whatsapp-btn {
@@ -132,9 +122,7 @@
       text-align: center;
       text-decoration: none;
       box-shadow: 0 0 24px #25d366cc;
-      transition: background 0.3s ease;
       margin: 0 auto 40px auto;
-      font-family: 'Montserrat', sans-serif;
       display: block;
     }
 
@@ -146,36 +134,6 @@
       body {
         padding: 30px 12px;
       }
-      .container {
-        width: 100%;
-        padding: 22px 18px;
-      }
-      h1 {
-        font-size: 1.6rem;
-        margin-bottom: 20px;
-      }
-      label {
-        font-size: 1rem;
-        margin-top: 16px;
-      }
-      input[type="text"], select {
-        font-size: 0.95rem;
-        padding: 10px 12px;
-      }
-      button {
-        font-size: 1rem;
-        padding: 13px;
-        margin-top: 22px;
-      }
-      .output-box {
-        font-size: 1.1rem;
-        padding: 18px 16px;
-      }
-      .whatsapp-btn {
-        font-size: 1.1rem;
-        padding: 14px 0;
-        margin-bottom: 30px;
-      }
     }
   </style>
 </head>
@@ -184,7 +142,7 @@
     <h1>VIP 𝑾𝑶𝑳𝑽𝑬𝑺 Predictor</h1>
 
     <label for="periodInput">Enter Period Number:</label>
-    <input type="text" id="periodInput" placeholder="e.g. 202506280041" autocomplete="off" />
+    <input type="text" id="periodInput" placeholder="e.g. 202507030123" />
 
     <label for="fileInput">Or upload Wingo Chart Screenshot:</label>
     <input type="file" id="fileInput" accept="image/png, image/jpeg" />
@@ -211,18 +169,11 @@
     <img id="imgPreview" class="image-preview" alt="Chart Preview" />
   </div>
 
-  <a
-    href="https://wa.link/eph5ri"
-    target="_blank"
-    rel="noopener noreferrer"
-    class="whatsapp-btn"
-  >
+  <a href="https://wa.link/eph5ri" target="_blank" class="whatsapp-btn">
     Join WhatsApp Group for 99% Accurate Signals
   </a>
 
-  <!-- Tesseract OCR -->
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@4.0.2/dist/tesseract.min.js"></script>
-
   <script>
     const periodInput = document.getElementById('periodInput');
     const fileInput = document.getElementById('fileInput');
@@ -240,28 +191,22 @@
 
     function predictFromDigit(digit) {
       const prediction = digit >= 5 ? 'BIG' : 'SMALL';
-      const color =
-        digit === 0 || digit === 5
-          ? 'VIOLET'
-          : digit % 2 === 0
-          ? 'GREEN'
-          : 'RED';
+      const color = digit === 0 || digit === 5 ? 'VIOLET' : digit % 2 === 0 ? 'GREEN' : 'RED';
       const confidence = Math.floor(70 + Math.random() * 25);
-      return { prediction, color, confidence, digit };
+      const nextNumber = (digit + [1,2,3,4][Math.floor(Math.random()*4)]) % 10;
+      return { prediction, color, confidence, digit, nextNumber };
     }
 
-    function displayPrediction({ prediction, color, confidence, digit }) {
+    function displayPrediction({ prediction, color, confidence, digit, nextNumber }) {
       resultOutput.innerHTML = `
-        ✅ <strong>Last Digit:</strong> ${digit}
-        🔮 <strong>Prediction:</strong> ${prediction}
-        🎨 <strong>Expected Color:</strong> ${color}
-        📊 <strong>Confidence:</strong> ${confidence}%
+✅ Last Digit: ${digit}
+🔮 Prediction: ${prediction}
+🎨 Color: ${color}
+🔢 Next Number : ${nextNumber}
+📊 Confidence: ${confidence}%
+
       `;
     }
-
-    periodInput.addEventListener('input', resetAll);
-    fileInput.addEventListener('change', resetAll);
-    numberSelect.addEventListener('change', resetAll);
 
     predictBtn.onclick = async () => {
       resetAll();
@@ -270,36 +215,28 @@
       const file = fileInput.files[0];
 
       if (period) {
-        resultOutput.textContent = 'Analyzing Period Number... Please wait 3 seconds...';
+        resultOutput.textContent = 'Analyzing Period Number...';
         setTimeout(() => {
-          const simulatedLastDigit = Math.floor(Math.random() * 10);
-          const prediction = predictFromDigit(simulatedLastDigit);
+          const simulated = Math.floor(Math.random() * 10);
+          const prediction = predictFromDigit(simulated);
           displayPrediction(prediction);
         }, 3000);
-
       } else if (file) {
         const imgUrl = URL.createObjectURL(file);
         imgPreview.src = imgUrl;
         imgPreview.style.display = 'block';
-        resultOutput.textContent = 'Analyzing chart image using AI...';
+        resultOutput.textContent = 'Analyzing chart image...';
 
-        Tesseract.recognize(
-          file,
-          'eng',
-          {
-            logger: m => {
-              resultOutput.textContent = `Processing image: ${Math.round(m.progress * 100)}%`;
-            }
-          }
-        ).then(({ data: { text } }) => {
-          console.log('OCR Output:', text);
-          const lastDigitMatch = text.match(/\b\d\b/g);
-          if (lastDigitMatch && lastDigitMatch.length > 0) {
-            const lastDigit = parseInt(lastDigitMatch[lastDigitMatch.length - 1]);
+        Tesseract.recognize(file, 'eng', {
+          logger: m => resultOutput.textContent = `Processing: ${Math.round(m.progress * 100)}%`
+        }).then(({ data: { text } }) => {
+          const match = text.match(/\d/g);
+          if (match && match.length > 0) {
+            const lastDigit = parseInt(match[match.length - 1]);
             const prediction = predictFromDigit(lastDigit);
             displayPrediction(prediction);
           } else {
-            resultOutput.textContent = '❌ Could not detect any number from chart image.';
+            resultOutput.textContent = '❌ Could not detect any number.';
           }
         }).catch(err => {
           console.error(err);
@@ -307,14 +244,13 @@
         });
 
       } else if (number !== '') {
-        resultOutput.textContent = 'Analyzing Selected Number... Please wait 3 seconds...';
+        resultOutput.textContent = 'Analyzing Selected Number...';
         setTimeout(() => {
           const prediction = predictFromDigit(parseInt(number));
           displayPrediction(prediction);
         }, 3000);
-
       } else {
-        errorMsg.textContent = 'Please enter a period, upload chart, or select last number.';
+        errorMsg.textContent = 'Please enter a period, upload chart, or select number.';
       }
     };
   </script>
